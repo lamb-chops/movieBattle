@@ -1,28 +1,33 @@
-const fetchData = async (searchTerm) => {
-  //sets up end points to attach at end of url, benefit of axios
-  const response = await axios.get("http://www.omdbapi.com/", {
-    params: {
-      apikey: "ffc91e36",
-      s: searchTerm,
-    },
-  });
-  //error is property in response, return empty array if no match to avoid errors
-  if (response.data.Error) {
-    return [];
-  }
-
-  //capital S cuz thats how api has it, array of movies
-  return response.data.Search;
-};
-
 createAutoComplete({
   root: document.querySelector(".autocomplete"),
-});
-createAutoComplete({
-  root: document.querySelector(".autocomplete2"),
-});
-createAutoComplete({
-  root: document.querySelector(".autocomplete3"),
+  renderOption(movie) {
+    const imgSrc = movie.Poster === "N/A" ? "" : movie.Poster;
+    return `
+        <img src="${imgSrc}"/>
+        ${movie.Title} (${movie.Year})
+    `;
+  },
+  onOptionSelect(movie) {
+    onMovieSelect(movie);
+  },
+  inputValue(movie) {
+    return movie.Title;
+  },
+  async fetchData(searchTerm) {
+    //sets up end points to attach at end of url, benefit of axios
+    const response = await axios.get("http://www.omdbapi.com/", {
+      params: {
+        apikey: "ffc91e36",
+        s: searchTerm,
+      },
+    });
+    //error is property in response, return empty array if no match to avoid errors
+    if (response.data.Error) {
+      return [];
+    }
+    //capital S cuz thats how api has it, array of movies
+    return response.data.Search;
+  },
 });
 
 const onMovieSelect = async (movie) => {

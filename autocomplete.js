@@ -1,4 +1,10 @@
-const createAutoComplete = ({ root }) => {
+const createAutoComplete = ({
+  root,
+  renderOption,
+  onOptionSelect,
+  inputValue,
+  fetchData
+}) => {
   root.innerHTML = `
     <label><b>Search For a Movie</b></label>
     <input class="input" />
@@ -29,17 +35,12 @@ const createAutoComplete = ({ root }) => {
     for (let movie of movies) {
       const option = document.createElement("a");
       //checks if image has actual source
-      const imgSrc = movie.Poster === "N/A" ? "" : movie.Poster;
       option.classList.add("dropdown-item");
-      //backticks for multi line, url supposed to be in quotes for image
-      option.innerHTML = `
-        <img src="${imgSrc}"/>
-        ${movie.Title}
-    `;
+      option.innerHTML = renderOption(movie);
       option.addEventListener("click", () => {
         dropdown.classList.remove("is-active");
-        input.value = movie.Title;
-        onMovieSelect(movie);
+        input.value = inputValue(movie);
+        onOptionSelect(movie);
       });
       resultsWrapper.appendChild(option);
     }
